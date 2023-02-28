@@ -101,8 +101,8 @@ const server = http.createServer((request, response) => {
             response.writeHead(404, {
                 "Content-Type": "text/plain"
             });
-            handleLog(err);
-            response.end("404 Not Found");
+            handleLog(`${reqContent} file does not exists`);
+            response.end(`${reqContent} file does not exists\n` + "404 Not Found");
             return;
         } else {
             let ext = reqContent.split('.')[1];
