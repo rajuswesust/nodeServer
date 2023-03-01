@@ -5,7 +5,6 @@ const path = require("path");
 const fs = require("fs");
 
 const { createReadStream } = require('fs');
-const fp = "./dancin.mp4"
 
 function handleLog(msg) {
     fs.appendFile('log.txt', msg + "\n\n", function (err) {
