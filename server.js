@@ -96,7 +96,7 @@ const server = http.createServer((request, response) => {
     console.log("requested : ", reqContent);
 
 
-    fs.exists(filePath, function (exists) {
+    fs.access(filePath, function (exists) {
         if (!exists) {
             response.writeHead(404, {
                 "Content-Type": "text/plain"
