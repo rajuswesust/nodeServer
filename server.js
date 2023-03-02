@@ -95,19 +95,26 @@ const server = http.createServer((request, response) => {
     console.log("requested : ", reqContent);
 
 
-    fs.access(filePath, function (exists) {
-        if (!exists) {
+  if (!fs.existsSync(filePath)) {
+        response.writeHead(404, {
+            "Content-Type": "text/plain"
+        });
+        handleLog(`${reqContent} file does not exists`);
+        response.end(`${reqContent} file does not exists\n` + "404 Not Found");
+        return;
+    }
+
+    fs.access(filePath, fs.constants.R_OK,function (err) {
+        if (err) {
             response.writeHead(404, {
                 "Content-Type": "text/plain"
             });
-            handleLog(`${reqContent} file does not exists`);
-            response.end(`${reqContent} file does not exists\n` + "404 Not Found");
-            return;
+            response.end(`${reqContent} file cannot be accessed`);
         } else {
             let ext = reqContent.split('.')[1];
 
             console.log("extension: " + ext);
-            
+
             const contentType = getContentType(ext);
 
             console.log("con-type: ", contentType);
@@ -127,6 +134,12 @@ const server = http.createServer((request, response) => {
                 // Reading the file
                 fs.readFile(filePath,
                     function (err, content) {
+                        if (err) {
+                            response.end(
+                                `Error while reading ${reqContent} file`
+                            );
+                            return;
+                        }
                         // Serving the image
                         response.end(content);
                     });
@@ -135,4 +148,6 @@ const server = http.createServer((request, response) => {
     });
 
     // response.end("This is a server...");
-}).listen(PORT);
+}).listen(PORT, () => {
+    console.log(`Server has started at http://localhost:${PORT}`);
+});
