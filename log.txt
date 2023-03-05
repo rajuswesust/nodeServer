@@ -1,0 +1,7 @@
+Sun Mar 05 2023		GET		200		::1		/folder/image.jpeg		OK, file has successfully streamed
+Sun Mar 05 2023		GET		200		::1		/		OK
+Sun Mar 05 2023		GET		200		::1		/flower.jpg		OK, file has successfully streamed
+Sun Mar 05 2023		GET		200		::1		/folder		OK
+Sun Mar 05 2023		GET		200		::1		/folder/image.jpeg		OK, file has successfully streamed
+Sun Mar 05 2023		GET		403		::1		/restricted.txt		Forbidden
+Sun Mar 05 2023		GET		200		::1		/server.js		OK, file has successfully streamed
