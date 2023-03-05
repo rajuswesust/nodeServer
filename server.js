@@ -12,7 +12,7 @@ function handleLog(req, statusCode, msg) {
     let { method } = req;
     let clientIp = req.socket.remoteAddress;
     let requestUrl = req.url;
-    let logMessage = time + "\t" + method + "\t" + statusCode + "\t" + clientIp + "\t" + requestUrl + "\t" + msg + "\n";
+    let logMessage = time + "\t\t" + method + "\t\t" + statusCode + "\t\t" + clientIp + "\t\t" + requestUrl + "\t\t" + msg + "\n";
     fs.appendFile('log.txt', logMessage, function (err) {
         if (err) {
             console.log(err);
@@ -136,6 +136,7 @@ const server = http.createServer((request, response) => {
                         fileStream.on('close', () => {
                             response.statusCode = 200;
                             handleLog(request, 200, "OK");
+                            console.log("file streaming has been closed");
                         });
 
                     };
