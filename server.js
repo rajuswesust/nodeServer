@@ -7,7 +7,6 @@ const fs = require("fs");
 const { createReadStream } = require('fs');
 
 function handleLog(req, statusCode, msg) {
-
     let time = new Date().toDateString();
     let { method } = req;
     let clientIp = req.socket.remoteAddress;
