@@ -102,9 +102,7 @@ const server = http.createServer((request, response) => {
             console.log("#requested url is a file");
             fs.access(filePath, fs.constants.R_OK, function (err) {
                 if (err) {
-                    response.writeHead(404, {
-                        "Content-Type": "text/plain"
-                    });
+                    response.statusCode =403;
                     response.end(`${reqContent} file cannot be accessed`);
                     handleLog(request, 403, "Forbidden");
                     return;
