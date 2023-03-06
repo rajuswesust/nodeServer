@@ -50,7 +50,7 @@ function getContentType(ext) {
 }
 
 function readDirectory(filePath, url) {
-    if(url == "/")
+    if (url == "/")
         url = "";
     let s = `<h1>List of Files:</h1>`;
     try {
@@ -97,65 +97,61 @@ const server = http.createServer((request, response) => {
         if (err) {
             response.statusCode = 505;
             handleLog(request, 500, " Internal Server Error");
-        } else {
-            if (stats.isFile()) {
-                console.log("#requested url is a file");
-
-                fs.access(filePath, fs.constants.R_OK, function (err) {
-                    if (err) {
-                        response.writeHead(404, {
-                            "Content-Type": "text/plain"
-                        });
-                        response.end(`${reqContent} file cannot be accessed`);
-                        handleLog(request, 403, "Forbidden");
-                    } else {
-                        let ext = reqContent.split('.')[1];
-
-                        console.log("extension: " + ext);
-
-                        const contentType = getContentType(ext);
-
-                        console.log("con-type: ", contentType);
-
-                        response.writeHead(200, {
-                            'Content-Type': contentType
-                        });
-
-                        const fileStream = createReadStream(filePath);
-                        fileStream.on('error', (e) => {
-                            console.log(e);
-                            handleLog(request, 500, " Internal Server Error");
-                        })
-                            .pipe(response)
-                            .on('error', (err) => {
-                                console.log(e);
-                                handleLog(request, 500, " Internal Server Error");
-
-                            });
-
-                        fileStream.on('close', () => {
-                            response.statusCode = 200;
-                            handleLog(request, 200, "OK");
-                            console.log("file streaming has been closed");
-                        });
-
-                    };
-                });
-
-            } else if (stats.isDirectory()) {
-                let fileList = readDirectory(filePath, url);
-                if(!fileList[0]) {
-                    response.statusCode = 500;
-                    res.end("Error while reading the directory \n Internal server error");
-                    handleLog(request, 500, " Internal Server Error");
+            return
+        }
+        if (stats.isFile()) {
+            console.log("#requested url is a file");
+            fs.access(filePath, fs.constants.R_OK, function (err) {
+                if (err) {
+                    response.writeHead(404, {
+                        "Content-Type": "text/plain"
+                    });
+                    response.end(`${reqContent} file cannot be accessed`);
+                    handleLog(request, 403, "Forbidden");
                     return;
                 }
-                console.log("#requested url is a a directory");
-                console.log(fileList);
-                response.end(fileList[1]);
-                handleLog(request, 200, "OK");
+                let ext = reqContent.split('.')[1];
+                const contentType = getContentType(ext);
+                
+                console.log("extension: " + ext);
+                console.log("con-type: ", contentType);
+
+                response.writeHead(200, {
+                    'Content-Type': contentType
+                });
+
+                const fileStream = createReadStream(filePath);
+                fileStream.on('error', (e) => {
+                    console.log(e);
+                    handleLog(request, 500, " Internal Server Error");
+                })
+                    .pipe(response)
+                    .on('error', (err) => {
+                        console.log(e);
+                        handleLog(request, 500, " Internal Server Error");
+
+                    });
+
+                fileStream.on('close', () => {
+                    response.statusCode = 200;
+                    handleLog(request, 200, "OK, file has successfully streamed");
+                    console.log("file streaming has been closed");
+                });
+            });
+
+        } else if (stats.isDirectory()) {
+            let fileList = readDirectory(filePath, url);
+            if (!fileList[0]) {
+                response.statusCode = 500;
+                res.end("Error while reading the directory \n Internal server error");
+                handleLog(request, 500, " Internal Server Error");
                 return;
             }
+            console.log("#requested url is a a directory");
+            console.log(fileList);
+            response.end(fileList[1]);
+            handleLog(request, 200, "OK");
+            return;
         }
     });
 }).listen(PORT, () => {
