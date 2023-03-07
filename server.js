@@ -114,7 +114,8 @@ const server = http.createServer((request, response) => {
                 console.log("con-type: ", contentType);
 
                 response.writeHead(200, {
-                    'Content-Type': contentType
+                    'Content-Type': contentType,
+                    'Content-Length': stats.size
                 });
 
                 const fileStream = createReadStream(filePath);
@@ -136,20 +137,20 @@ const server = http.createServer((request, response) => {
                 });
             });
 
-        } else if (stats.isDirectory()) {
-            let fileList = readDirectory(filePath, url);
-            if (!fileList[0]) {
-                response.statusCode = 500;
-                res.end("Error while reading the directory \n Internal server error");
-                handleLog(request, 500, " Internal Server Error");
-                return;
-            }
-            console.log("#requested url is a a directory");
-            console.log(fileList);
-            response.end(fileList[1]);
-            handleLog(request, 200, "OK");
+        }
+        //requested file is a directory
+        let fileList = readDirectory(filePath, url);
+        if (!fileList[0]) {
+            response.statusCode = 500;
+            res.end("Error while reading the directory \n Internal server error");
+            handleLog(request, 500, " Internal Server Error");
             return;
         }
+        console.log("#requested url is a a directory");
+        console.log(fileList);
+        response.end(fileList[1]);
+        handleLog(request, 200, "OK");
+        return;
     });
 }).listen(PORT, () => {
     console.log(`Server has started at http://localhost:${PORT}`);
