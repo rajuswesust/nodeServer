@@ -76,9 +76,6 @@ const server = http.createServer((request, response) => {
     };
 
     const filePath = __dirname + url;
-    console.log("directory: " + __dirname);
-    console.log("file path : " + filePath);
-
     let arr = url.split('/');
     let reqContent = arr[arr.length - 1];
     console.log("requested : ", reqContent);
@@ -99,7 +96,6 @@ const server = http.createServer((request, response) => {
             return
         }
         if (stats.isFile()) {
-            console.log("#requested url is a file");
             fs.access(filePath, fs.constants.R_OK, function (err) {
                 if (err) {
                     response.statusCode =403;
@@ -120,12 +116,10 @@ const server = http.createServer((request, response) => {
 
                 const fileStream = createReadStream(filePath);
                 fileStream.on('error', (e) => {
-                    console.log(e);
                     handleLog(request, 500, " Internal Server Error");
                 })
                     .pipe(response)
                     .on('error', (err) => {
-                        console.log(e);
                         handleLog(request, 500, " Internal Server Error");
 
                     });
@@ -133,7 +127,6 @@ const server = http.createServer((request, response) => {
                 fileStream.on('close', () => {
                     response.statusCode = 200;
                     handleLog(request, 200, "OK, file has successfully streamed");
-                    console.log("file streaming has been closed");
                 });
             });
 
@@ -146,8 +139,6 @@ const server = http.createServer((request, response) => {
             handleLog(request, 500, " Internal Server Error");
             return;
         }
-        console.log("#requested url is a a directory");
-        console.log(fileList);
         response.end(fileList[1]);
         handleLog(request, 200, "OK");
         return;
