@@ -129,13 +129,13 @@ const server = http.createServer((request, response) => {
                     handleLog(request, 200, "OK, file has successfully streamed");
                 });
             });
-
+            return;
         }
         //requested file is a directory
         let fileList = readDirectory(filePath, url);
         if (!fileList[0]) {
             response.statusCode = 500;
-            res.end("Error while reading the directory \n Internal server error");
+            response.end("Error while reading the directory \n Internal server error");
             handleLog(request, 500, " Internal Server Error");
             return;
         }
